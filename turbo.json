@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "!dist/react/**", "!dist/next/**", "!dist/cli/**"]
+    },
+    "//#assemble": {
+      "dependsOn": [
+        "paybridge#build",
+        "paybridge-react-internal#build",
+        "paybridge-next-internal#build",
+        "paybridge-cli-internal#build"
+      ],
+      "outputs": ["packages/core/dist/react/**", "packages/core/dist/next/**", "packages/core/dist/cli/**"]
+    },
+    "paybridge-example-app-router#build": {
+      "dependsOn": ["^build", "//#assemble"]
+    },
+    "paybridge-example-pages-router#build": {
+      "dependsOn": ["^build", "//#assemble"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint": {
+      "outputs": []
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    }
+  }
+}

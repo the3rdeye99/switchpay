@@ -1,0 +1,12 @@
+import { GET, POST } from "paybridge/next";
+
+// Handles /api/paybridge/init, /api/paybridge/verify, and /api/paybridge/webhook.
+// To hook into payment lifecycle events, replace this with createHandler():
+//
+// import { createHandler } from "paybridge/next";
+// export const { GET, POST } = createHandler({
+//   onPaymentSuccess: async (tx) => { /* e.g. mark order paid in your DB */ },
+//   onPaymentFailed: async (tx) => { /* e.g. notify the customer */ },
+// });
+
+export { GET, POST };

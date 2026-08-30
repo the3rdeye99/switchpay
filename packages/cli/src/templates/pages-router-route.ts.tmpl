@@ -1,0 +1,12 @@
+import { buildPagesHandler, config } from "paybridge/next";
+
+// Handles /api/paybridge/init, /api/paybridge/verify, and /api/paybridge/webhook.
+// To hook into payment lifecycle events, pass callbacks to buildPagesHandler():
+//
+// export default buildPagesHandler({
+//   onPaymentSuccess: async (tx) => { /* e.g. mark order paid in your DB */ },
+//   onPaymentFailed: async (tx) => { /* e.g. notify the customer */ },
+// });
+
+export { config };
+export default buildPagesHandler();
