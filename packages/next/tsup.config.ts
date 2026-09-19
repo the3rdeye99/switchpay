@@ -7,5 +7,5 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   splitting: false,
-  external: ["next", "paybridge"],
+  external: ["next", "switchpay"],
 });

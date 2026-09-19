@@ -32,15 +32,15 @@ importers:
       next:
         specifier: ^14.0.0
         version: 14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      paybridge:
-        specifier: workspace:*
-        version: link:../../packages/core
       react:
         specifier: ^18.3.0
         version: 18.3.1
       react-dom:
         specifier: ^18.3.0
         version: 18.3.1(react@18.3.1)
+      switchpay:
+        specifier: workspace:*
+        version: link:../../packages/core
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
@@ -57,15 +57,15 @@ importers:
       next:
         specifier: ^14.0.0
         version: 14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      paybridge:
-        specifier: workspace:*
-        version: link:../../packages/core
       react:
         specifier: ^18.3.0
         version: 18.3.1
       react-dom:
         specifier: ^18.3.0
         version: 18.3.1(react@18.3.1)
+      switchpay:
+        specifier: workspace:*
+        version: link:../../packages/core
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
@@ -118,7 +118,7 @@ importers:
       next:
         specifier: ^14.0.0
         version: 14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      paybridge:
+      switchpay:
         specifier: workspace:*
         version: link:../core
       tsup:

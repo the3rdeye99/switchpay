@@ -8,7 +8,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "paybridge-example-app-router",
-    "paybridge-example-pages-router"
+    "switchpay-example-app-router",
+    "switchpay-example-pages-router"
   ]
 }

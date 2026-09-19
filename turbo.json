@@ -7,22 +7,31 @@
     },
     "//#assemble": {
       "dependsOn": [
-        "paybridge#build",
-        "paybridge-react-internal#build",
-        "paybridge-next-internal#build",
-        "paybridge-cli-internal#build"
+        "switchpay#build",
+        "switchpay-react-internal#build",
+        "switchpay-next-internal#build",
+        "switchpay-cli-internal#build"
       ],
       "outputs": ["packages/core/dist/react/**", "packages/core/dist/next/**", "packages/core/dist/cli/**"]
     },
-    "paybridge-example-app-router#build": {
+    "switchpay-example-app-router#build": {
       "dependsOn": ["^build", "//#assemble"]
     },
-    "paybridge-example-pages-router#build": {
+    "switchpay-example-pages-router#build": {
       "dependsOn": ["^build", "//#assemble"]
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "switchpay-example-app-router#dev": {
+      "dependsOn": ["//#assemble"]
+    },
+    "switchpay-example-pages-router#dev": {
+      "dependsOn": ["//#assemble"]
+    },
+    "switchpay#dev": {
+      "dependsOn": ["^build", "//#assemble"]
     },
     "test": {
       "dependsOn": ["^build"],

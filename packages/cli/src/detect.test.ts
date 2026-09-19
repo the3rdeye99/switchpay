@@ -7,7 +7,7 @@ import { detectRouter } from "./detect.js";
 let tmpDir: string;
 
 beforeEach(() => {
-  tmpDir = mkdtempSync(path.join(os.tmpdir(), "paybridge-test-"));
+  tmpDir = mkdtempSync(path.join(os.tmpdir(), "switchpay-test-"));
 });
 
 afterEach(() => {

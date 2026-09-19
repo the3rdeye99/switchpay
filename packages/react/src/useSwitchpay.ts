@@ -1,19 +1,19 @@
 import { useCallback, useRef, useState } from "react";
 import type {
   PayParams,
-  PayBridgeErrorLike,
-  PayBridgeStatus,
-  UsePayBridgeResult,
+  SwitchpayErrorLike,
+  SwitchpayStatus,
+  UseSwitchpayResult,
   VerifyResultLike,
 } from "./types.js";
 
-const INIT_ENDPOINT = "/api/paybridge/init";
-const VERIFY_ENDPOINT = "/api/paybridge/verify";
+const INIT_ENDPOINT = "/api/switchpay/init";
+const VERIFY_ENDPOINT = "/api/switchpay/verify";
 const POPUP_POLL_INTERVAL_MS = 500;
 
-function toError(err: unknown): PayBridgeErrorLike {
+function toError(err: unknown): SwitchpayErrorLike {
   if (err && typeof err === "object" && "code" in err && "message" in err) {
-    return err as PayBridgeErrorLike;
+    return err as SwitchpayErrorLike;
   }
   return { code: "NETWORK_ERROR", message: "Something went wrong. Please try again." };
 }
@@ -21,16 +21,16 @@ function toError(err: unknown): PayBridgeErrorLike {
 /**
  * Provider-agnostic checkout hook. Regardless of whether Paystack or
  * Flutterwave is active on the server, this hook only ever deals with
- * PayBridge's normalized shapes — it never knows or cares which provider
- * is behind /api/paybridge/*.
+ * Switchpay's normalized shapes — it never knows or cares which provider
+ * is behind /api/switchpay/*.
  *
  * Flow: POST init -> open provider's hosted checkout in a popup -> poll
  * for the popup closing -> GET verify -> update status/transaction.
  */
-export function usePayBridge(): UsePayBridgeResult {
-  const [status, setStatus] = useState<PayBridgeStatus>("idle");
+export function useSwitchpay(): UseSwitchpayResult {
+  const [status, setStatus] = useState<SwitchpayStatus>("idle");
   const [transaction, setTransaction] = useState<VerifyResultLike | null>(null);
-  const [error, setError] = useState<PayBridgeErrorLike | null>(null);
+  const [error, setError] = useState<SwitchpayErrorLike | null>(null);
   const pollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const reset = useCallback(() => {
@@ -72,7 +72,7 @@ export function usePayBridge(): UsePayBridgeResult {
 
     const popup = window.open(
       checkoutUrl,
-      "paybridge-checkout",
+      "switchpay-checkout",
       "width=480,height=720"
     );
 

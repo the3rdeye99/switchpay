@@ -1,6 +1,6 @@
 import { useEffect, useRef, type ButtonHTMLAttributes } from "react";
-import { usePayBridge } from "./usePayBridge.js";
-import type { PayBridgeErrorLike, VerifyResultLike } from "./types.js";
+import { useSwitchpay } from "./useSwitchpay.js";
+import type { SwitchpayErrorLike, VerifyResultLike } from "./types.js";
 
 export interface PayButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onError"> {
@@ -9,13 +9,13 @@ export interface PayButtonProps
   currency?: string;
   metadata?: Record<string, unknown>;
   onSuccess?: (tx: VerifyResultLike) => void;
-  onError?: (err: PayBridgeErrorLike) => void;
+  onError?: (err: SwitchpayErrorLike) => void;
   onCancel?: () => void;
 }
 
 /**
  * Drop-in payment button. Handles the full checkout lifecycle via
- * usePayBridge() and disables itself during processing to prevent
+ * useSwitchpay() and disables itself during processing to prevent
  * double-submission.
  */
 export function PayButton({
@@ -31,7 +31,7 @@ export function PayButton({
   children,
   ...buttonProps
 }: PayButtonProps) {
-  const { pay, status, transaction, error } = usePayBridge();
+  const { pay, status, transaction, error } = useSwitchpay();
 
   // Fire lifecycle callbacks exactly once per transition.
   const lastHandledStatus = useRef<string | null>(null);

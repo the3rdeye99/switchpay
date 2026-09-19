@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-vi.mock("paybridge", () => {
-  class PayBridgeError extends Error {
+vi.mock("switchpay", () => {
+  class SwitchpayError extends Error {
     code: string;
     constructor(code: string, message: string) {
       super(message);
@@ -13,11 +13,11 @@ vi.mock("paybridge", () => {
     initTransaction: vi.fn(),
     verifyTransaction: vi.fn(),
     handleWebhook: vi.fn(),
-    PayBridgeError,
+    SwitchpayError,
   };
 });
 
-import { initTransaction, verifyTransaction, handleWebhook } from "paybridge";
+import { initTransaction, verifyTransaction, handleWebhook } from "switchpay";
 import { buildPagesHandler } from "./pages-router.js";
 
 /** Minimal fake NextApiRequest supporting the raw-body async iterator. */

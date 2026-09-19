@@ -1,7 +1,7 @@
-import { PayBridgeError } from "../errors.js";
+import { SwitchpayError } from "../errors.js";
 import type { SupportedProvider } from "../providers/types.js";
 
-export interface PayBridgeConfig {
+export interface SwitchpayConfig {
   provider: SupportedProvider;
   secretKey: string;
   publicKey: string;
@@ -20,44 +20,44 @@ const KEY_PREFIXES: Record<SupportedProvider, { secret: string; public: string }
 };
 
 /**
- * Reads and validates PayBridge's environment variables at runtime.
- * Throws PayBridgeError(MISSING_CONFIG) if a required var is absent, or
- * PayBridgeError(INVALID_KEY) if a key's prefix doesn't match the declared provider.
+ * Reads and validates Switchpay's environment variables at runtime.
+ * Throws SwitchpayError(MISSING_CONFIG) if a required var is absent, or
+ * SwitchpayError(INVALID_KEY) if a key's prefix doesn't match the declared provider.
  */
-export function loadConfig(): PayBridgeConfig {
-  const providerRaw = process.env.PAYBRIDGE_PROVIDER;
+export function loadConfig(): SwitchpayConfig {
+  const providerRaw = process.env.SWITCHPAY_PROVIDER;
   if (!providerRaw) {
-    throw new PayBridgeError(
+    throw new SwitchpayError(
       "MISSING_CONFIG",
-      "PAYBRIDGE_PROVIDER is required (expected 'paystack' or 'flutterwave')."
+      "SWITCHPAY_PROVIDER is required (expected 'paystack' or 'flutterwave')."
     );
   }
   if (!SUPPORTED_PROVIDERS.includes(providerRaw as SupportedProvider)) {
-    throw new PayBridgeError(
+    throw new SwitchpayError(
       "UNSUPPORTED_PROVIDER",
       `Unknown provider "${providerRaw}". Expected 'paystack' or 'flutterwave'.`
     );
   }
   const provider = providerRaw as SupportedProvider;
 
-  const secretKey = requireEnv("PAYBRIDGE_SECRET_KEY");
-  const publicKey = requireEnv("NEXT_PUBLIC_PAYBRIDGE_PUBLIC_KEY");
-  const webhookSecret = requireEnv("PAYBRIDGE_WEBHOOK_SECRET");
-  const currency = process.env.PAYBRIDGE_CURRENCY || "NGN";
-  const callbackUrl = process.env.PAYBRIDGE_CALLBACK_URL;
+  const secretKey = requireEnv("SWITCHPAY_SECRET_KEY");
+  const publicKey = requireEnv("NEXT_PUBLIC_SWITCHPAY_PUBLIC_KEY");
+  const webhookSecret = requireEnv("SWITCHPAY_WEBHOOK_SECRET");
+  const currency = process.env.SWITCHPAY_CURRENCY || "NGN";
+  const callbackUrl = process.env.SWITCHPAY_CALLBACK_URL;
 
   const prefixes = KEY_PREFIXES[provider];
   if (!secretKey.startsWith(prefixes.secret)) {
-    throw new PayBridgeError(
+    throw new SwitchpayError(
       "INVALID_KEY",
-      `PAYBRIDGE_SECRET_KEY does not match the expected format for provider "${provider}".`,
+      `SWITCHPAY_SECRET_KEY does not match the expected format for provider "${provider}".`,
       { provider }
     );
   }
   if (!publicKey.startsWith(prefixes.public)) {
-    throw new PayBridgeError(
+    throw new SwitchpayError(
       "INVALID_KEY",
-      `NEXT_PUBLIC_PAYBRIDGE_PUBLIC_KEY does not match the expected format for provider "${provider}".`,
+      `NEXT_PUBLIC_SWITCHPAY_PUBLIC_KEY does not match the expected format for provider "${provider}".`,
       { provider }
     );
   }
@@ -68,7 +68,7 @@ export function loadConfig(): PayBridgeConfig {
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
-    throw new PayBridgeError("MISSING_CONFIG", `${name} is required but was not set.`);
+    throw new SwitchpayError("MISSING_CONFIG", `${name} is required but was not set.`);
   }
   return value;
 }

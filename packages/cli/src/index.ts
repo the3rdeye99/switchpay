@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import { initCommand } from "./commands/init.js";
 
 async function main() {
@@ -22,10 +21,10 @@ async function main() {
 
 function printHelp(): void {
   console.log(`
-paybridge — unified payment SDK for Paystack and Flutterwave
+switchpay — unified payment SDK for Paystack and Flutterwave
 
 Usage:
-  npx paybridge init    Scaffold PayBridge into the current Next.js project
+  npx switchpay init    Scaffold Switchpay into the current Next.js project
 `);
 }
 

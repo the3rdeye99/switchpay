@@ -2,10 +2,10 @@ import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { flutterwaveAdapter } from "./flutterwave.js";
-import { PayBridgeError } from "../errors.js";
-import type { PayBridgeConfig } from "../server/config.js";
+import { SwitchpayError } from "../errors.js";
+import type { SwitchpayConfig } from "../server/config.js";
 
-const config: PayBridgeConfig = {
+const config: SwitchpayConfig = {
   provider: "flutterwave",
   secretKey: "FLWSECK_TEST-123",
   publicKey: "FLWPUBK_TEST-123",
@@ -25,7 +25,7 @@ describe("flutterwaveAdapter.initTransaction", () => {
         const body = (await request.json()) as { amount: number; tx_ref: string };
         // amount stays in major units for Flutterwave
         expect(body.amount).toBe(5000);
-        expect(body.tx_ref).toMatch(/^pb_/);
+        expect(body.tx_ref).toMatch(/^sw_/);
         return HttpResponse.json({
           status: "success",
           message: "ok",
@@ -41,10 +41,10 @@ describe("flutterwaveAdapter.initTransaction", () => {
     });
 
     expect(result.checkoutUrl).toBe("https://checkout.flutterwave.com/xyz");
-    expect(result.reference).toMatch(/^pb_/);
+    expect(result.reference).toMatch(/^sw_/);
   });
 
-  it("throws PayBridgeError(NETWORK_ERROR) on provider failure", async () => {
+  it("throws SwitchpayError(NETWORK_ERROR) on provider failure", async () => {
     server.use(
       http.post("https://api.flutterwave.com/v3/payments", () =>
         HttpResponse.json({ status: "error", message: "Invalid key" }, { status: 401 })
@@ -57,7 +57,7 @@ describe("flutterwaveAdapter.initTransaction", () => {
     ).rejects.toMatchObject({ code: "NETWORK_ERROR" });
   });
 
-  it("throws PayBridgeError on malformed response", async () => {
+  it("throws SwitchpayError on malformed response", async () => {
     server.use(
       http.post("https://api.flutterwave.com/v3/payments", () =>
         HttpResponse.json({ unexpected: "shape" })
@@ -68,7 +68,7 @@ describe("flutterwaveAdapter.initTransaction", () => {
     const err = await adapter
       .initTransaction({ amount: 5000, email: "test@example.com" })
       .catch((e) => e);
-    expect(err).toBeInstanceOf(PayBridgeError);
+    expect(err).toBeInstanceOf(SwitchpayError);
   });
 });
 
@@ -80,7 +80,7 @@ describe("flutterwaveAdapter.verifyTransaction", () => {
           status: "success",
           message: "ok",
           data: {
-            tx_ref: "pb_123",
+            tx_ref: "sw_123",
             status: "successful",
             amount: 5000,
             currency: "NGN",
@@ -93,10 +93,10 @@ describe("flutterwaveAdapter.verifyTransaction", () => {
     );
 
     const adapter = flutterwaveAdapter(config);
-    const result = await adapter.verifyTransaction("pb_123");
+    const result = await adapter.verifyTransaction("sw_123");
 
     expect(result).toEqual({
-      reference: "pb_123",
+      reference: "sw_123",
       status: "success",
       amount: 5000,
       currency: "NGN",
@@ -106,7 +106,7 @@ describe("flutterwaveAdapter.verifyTransaction", () => {
     });
   });
 
-  it("throws PayBridgeError(VERIFICATION_FAILED) on failure", async () => {
+  it("throws SwitchpayError(VERIFICATION_FAILED) on failure", async () => {
     server.use(
       http.get("https://api.flutterwave.com/v3/transactions/verify_by_reference", () =>
         HttpResponse.json({ status: "error", message: "not found" }, { status: 404 })
@@ -119,7 +119,7 @@ describe("flutterwaveAdapter.verifyTransaction", () => {
     });
   });
 
-  it("throws PayBridgeError on malformed response", async () => {
+  it("throws SwitchpayError on malformed response", async () => {
     server.use(
       http.get("https://api.flutterwave.com/v3/transactions/verify_by_reference", () =>
         HttpResponse.json({ garbage: true })
@@ -127,8 +127,8 @@ describe("flutterwaveAdapter.verifyTransaction", () => {
     );
 
     const adapter = flutterwaveAdapter(config);
-    const err = await adapter.verifyTransaction("pb_123").catch((e) => e);
-    expect(err).toBeInstanceOf(PayBridgeError);
+    const err = await adapter.verifyTransaction("sw_123").catch((e) => e);
+    expect(err).toBeInstanceOf(SwitchpayError);
   });
 });
 
@@ -137,7 +137,7 @@ describe("flutterwaveAdapter.parseWebhook", () => {
     const payload = {
       event: "charge.completed",
       data: {
-        tx_ref: "pb_123",
+        tx_ref: "sw_123",
         status: "successful",
         amount: 5000,
         currency: "NGN",
@@ -154,7 +154,7 @@ describe("flutterwaveAdapter.parseWebhook", () => {
 
     expect(event).toEqual({
       type: "payment.success",
-      reference: "pb_123",
+      reference: "sw_123",
       amount: 5000,
       currency: "NGN",
       email: "test@example.com",
@@ -166,7 +166,7 @@ describe("flutterwaveAdapter.parseWebhook", () => {
     const payload = {
       event: "charge.completed",
       data: {
-        tx_ref: "pb_123",
+        tx_ref: "sw_123",
         status: "successful",
         amount: 5000,
         currency: "NGN",
@@ -197,7 +197,7 @@ describe("flutterwaveAdapter.parseWebhook", () => {
     const payload = {
       event: "charge.completed",
       data: {
-        tx_ref: "pb_456",
+        tx_ref: "sw_456",
         status: "failed",
         amount: 1000,
         currency: "NGN",

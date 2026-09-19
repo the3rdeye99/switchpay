@@ -1,5 +1,5 @@
 /**
- * Core types shared across all PayBridge provider adapters.
+ * Core types shared across all Switchpay provider adapters.
  *
  * IMPORTANT: These types define the public API surface. No provider-specific
  * field names, casing conventions, or response shapes may leak through here.

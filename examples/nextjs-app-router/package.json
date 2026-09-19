@@ -1,5 +1,5 @@
 {
-  "name": "paybridge-example-app-router",
+  "name": "switchpay-example-app-router",
   "private": true,
   "version": "0.1.0",
   "scripts": {
@@ -11,7 +11,7 @@
     "next": "^14.0.0",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "paybridge": "workspace:*"
+    "switchpay": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.5.0",

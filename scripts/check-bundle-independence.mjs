@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Definition of Done requires that paybridge, paybridge/react, and
- * paybridge/next are independently importable without pulling in unrelated
+ * Definition of Done requires that switchpay, switchpay/react, and
+ * switchpay/next are independently importable without pulling in unrelated
  * code. This script does a cheap static check: it scans each assembled
  * entry's compiled output for import specifiers that reach into the other
  * subpaths' source, which would indicate accidental coupling.
@@ -18,9 +18,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distRoot = path.join(__dirname, "..", "packages", "core", "dist");
 
 const entries = [
-  { name: "paybridge (core)", dir: distRoot, forbidden: ["/react/", "/next/", "/cli/"] },
-  { name: "paybridge/react", dir: path.join(distRoot, "react"), forbidden: ["/next/", "/cli/"] },
-  { name: "paybridge/next", dir: path.join(distRoot, "next"), forbidden: ["/react/", "/cli/"] },
+  { name: "switchpay (core)", dir: distRoot, forbidden: ["/react/", "/next/", "/cli/"] },
+  { name: "switchpay/react", dir: path.join(distRoot, "react"), forbidden: ["/next/", "/cli/"] },
+  { name: "switchpay/next", dir: path.join(distRoot, "next"), forbidden: ["/react/", "/cli/"] },
 ];
 
 function listFiles(dir) {
@@ -64,5 +64,5 @@ if (failed) {
   console.error("\nBundle independence check failed — see above.");
   process.exit(1);
 } else {
-  console.log("✔ paybridge, paybridge/react, and paybridge/next are independently importable.");
+  console.log("✔ switchpay, switchpay/react, and switchpay/next are independently importable.");
 }

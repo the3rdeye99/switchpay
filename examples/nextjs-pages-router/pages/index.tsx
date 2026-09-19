@@ -1,9 +1,9 @@
-import { PayButton } from "paybridge/react";
+import { PayButton } from "switchpay/react";
 
 export default function Home() {
   return (
     <main style={{ padding: 40, fontFamily: "sans-serif" }}>
-      <h1>PayBridge — Pages Router Example</h1>
+      <h1>Switchpay — Pages Router Example</h1>
       <p>Click below to pay ₦5,000 via whichever provider is configured in .env.local.</p>
       <PayButton
         amount={5000}

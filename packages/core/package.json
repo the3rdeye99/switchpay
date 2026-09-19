@@ -1,5 +1,5 @@
 {
-  "name": "paybridge",
+  "name": "switchpay",
   "version": "0.1.0",
   "description": "Unified payment SDK for Paystack and Flutterwave in React/Next.js apps",
   "license": "MIT",
@@ -26,7 +26,11 @@
   },
   "files": ["dist"],
   "bin": {
-    "paybridge": "./dist/cli/index.js"
+    "switchpay": "./dist/cli/index.js"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "next": ">=13.0.0"
   },
   "scripts": {
     "build": "tsup",

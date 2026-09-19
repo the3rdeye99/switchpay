@@ -1,4 +1,4 @@
-# Contributing to PayBridge
+# Contributing to Switchpay
 
 Thanks for considering a contribution!
 
@@ -14,12 +14,12 @@ pnpm test
 
 This is a pnpm + Turborepo monorepo:
 
-- `packages/core` — published as `paybridge`. Provider adapters, server
+- `packages/core` — published as `switchpay`. Provider adapters, server
   logic, and the CLI/react/next subpath outputs are assembled here at
   publish time (see `scripts/assemble-publish-package.mjs`).
-- `packages/react` — source for `paybridge/react` (dev/test in isolation).
-- `packages/next` — source for `paybridge/next` (dev/test in isolation).
-- `packages/cli` — source for the `paybridge` CLI bin.
+- `packages/react` — source for `switchpay/react` (dev/test in isolation).
+- `packages/next` — source for `switchpay/next` (dev/test in isolation).
+- `packages/cli` — source for the `switchpay` CLI bin.
 - `examples/` — runnable App Router and Pages Router demo apps.
 
 ## Making changes

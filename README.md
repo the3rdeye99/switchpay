@@ -1,20 +1,11 @@
 # Docs
 
-The build spec (Section 16) states that complete user-facing documentation
-(15 pages, quickstart → API reference) was "already written" and provided
-separately, and that it should be treated as the source of truth for naming,
-wording, and public API shape.
+The full user documentation lives in [docs/](./docs/) — 15 pages from
+quickstart to API reference. This README is the quick version; the docs are
+the source of truth for naming, wording, and the public API shape, and have
+been reconciled against the shipped API surface.
 
-That documentation was **not** included alongside the build spec PDF in this
-project. Rather than inventing 15 pages of docs and risking a mismatch with
-the real source of truth (per the spec's own instruction to flag conflicts
-rather than silently pick), this is a placeholder.
-
-**Action needed:** drop the real docs pages into this folder, then reconcile
-them against the shipped API surface (per the Phase 13 checklist: "verify all
-docs pages match the actual shipped API exactly"). The README.md at the repo
-root currently stands in as a working quickstart in the meantime.
-# PayBridge
+# Switchpay
 
 A free, open-source SDK that lets you accept payments in React/Next.js apps
 through **Paystack** or **Flutterwave** — without writing provider-specific
@@ -36,14 +27,14 @@ integration code. One API. Either provider. Switch with an env var.
 - [Switching providers](#switching-providers)
 - [Handling payment events](#handling-payment-events)
 - [API Reference](#api-reference)
-  - [`paybridge` (core)](#paybridge-core)
-  - [`paybridge/react`](#paybridgereact)
-  - [`paybridge/next`](#paybridgenext)
+  - [`switchpay` (core)](#switchpay-core)
+  - [`switchpay/react`](#switchpayreact)
+  - [`switchpay/next`](#switchpaynext)
   - [CLI](#cli)
 - [Environment variables](#environment-variables)
 - [Error codes](#error-codes)
 - [Security notes](#security-notes)
-- [What PayBridge does not do](#what-paybridge-does-not-do-by-design)
+- [What Switchpay does not do](#what-switchpay-does-not-do-by-design)
 - [Testing](#testing)
 - [Contributing](#contributing)
 - [License](#license)
@@ -53,7 +44,7 @@ integration code. One API. Either provider. Switch with an env var.
 ## Install
 
 ```bash
-npm install paybridge
+npm install switchpay
 ```
 
 Requires Node.js 18+, Next.js 13+ (App Router or Pages Router), React 18+.
@@ -65,7 +56,7 @@ Install → first payment in under 15 minutes.
 ### 1. Scaffold your project
 
 ```bash
-npx paybridge init
+npx switchpay init
 ```
 
 This detects whether you're on the App Router or Pages Router, writes the
@@ -76,21 +67,21 @@ overwrites an existing `.env.local`.
 ### 2. Fill in `.env.local`
 
 ```bash
-PAYBRIDGE_PROVIDER=paystack            # or "flutterwave"
-PAYBRIDGE_SECRET_KEY=sk_test_xxx
-NEXT_PUBLIC_PAYBRIDGE_PUBLIC_KEY=pk_test_xxx
-PAYBRIDGE_WEBHOOK_SECRET=whsec_xxx
+SWITCHPAY_PROVIDER=paystack            # or "flutterwave"
+SWITCHPAY_SECRET_KEY=sk_test_xxx
+NEXT_PUBLIC_SWITCHPAY_PUBLIC_KEY=pk_test_xxx
+SWITCHPAY_WEBHOOK_SECRET=whsec_xxx
 ```
 
 Get test keys from your Paystack or Flutterwave dashboard. For Paystack,
-`PAYBRIDGE_WEBHOOK_SECRET` is the same value as your secret key. For
+`SWITCHPAY_WEBHOOK_SECRET` is the same value as your secret key. For
 Flutterwave, it's the hash you configure under Settings → Webhooks in your
 dashboard (not your secret key).
 
 ### 3. Add a `<PayButton />`
 
 ```tsx
-import { PayButton } from "paybridge/react";
+import { PayButton } from "switchpay/react";
 
 export default function CheckoutPage() {
   return (
@@ -110,7 +101,7 @@ export default function CheckoutPage() {
 
 In your Paystack or Flutterwave dashboard, set the webhook URL to:
 
-https://your-domain.com/api/paybridge/webhook
+https://your-domain.com/api/switchpay/webhook
 
 
 ### 5. Run your dev server and make a test payment
@@ -128,13 +119,13 @@ That's it — you now have a working, provider-agnostic checkout flow.
 Change one line in `.env.local`:
 
 ```diff
-- PAYBRIDGE_PROVIDER=paystack
-+ PAYBRIDGE_PROVIDER=flutterwave
+- SWITCHPAY_PROVIDER=paystack
++ SWITCHPAY_PROVIDER=flutterwave
 ```
 
 Swap the key/secret values for the new provider. **No code changes required**
 — your `<PayButton />`, route handlers, and webhook logic all stay exactly
-the same, because PayBridge normalizes both providers behind one interface.
+the same, because Switchpay normalizes both providers behind one interface.
 
 ---
 
@@ -145,10 +136,10 @@ any server-side logic on success/failure. For that — e.g. marking an order
 paid in your database — use `createHandler` (App Router) or pass callbacks
 to `buildPagesHandler` (Pages Router):
 
-**App Router** (`app/api/paybridge/[...route]/route.ts`):
+**App Router** (`app/api/switchpay/[...route]/route.ts`):
 
 ```ts
-import { createHandler } from "paybridge/next";
+import { createHandler } from "switchpay/next";
 
 export const { GET, POST } = createHandler({
   onPaymentSuccess: async (tx) => {
@@ -161,10 +152,10 @@ export const { GET, POST } = createHandler({
 });
 ```
 
-**Pages Router** (`pages/api/paybridge/[...route].ts`):
+**Pages Router** (`pages/api/switchpay/[...route].ts`):
 
 ```ts
-import { buildPagesHandler, config } from "paybridge/next";
+import { buildPagesHandler, config } from "switchpay/next";
 
 export { config }; // required — disables Next's body parser for signature verification
 
@@ -185,7 +176,7 @@ if the provider retries the webhook delivery (see [idempotency](#security-notes)
 
 ## API Reference
 
-### `paybridge` (core)
+### `switchpay` (core)
 
 Framework-agnostic. Safe to use in any Node.js server context, not just Next.js.
 
@@ -197,9 +188,9 @@ Starts a transaction with the active provider.
 interface InitParams {
   amount: number; // major currency unit, e.g. 5000 for ₦5,000 — never minor units
   email: string;
-  currency?: string; // defaults to PAYBRIDGE_CURRENCY, or "NGN"
+  currency?: string; // defaults to SWITCHPAY_CURRENCY, or "NGN"
   metadata?: Record<string, unknown>;
-  callbackUrl?: string; // defaults to PAYBRIDGE_CALLBACK_URL
+  callbackUrl?: string; // defaults to SWITCHPAY_CALLBACK_URL
 }
 
 interface InitResult {
@@ -245,26 +236,26 @@ Returns a standard `Response`: `401` for an invalid/missing signature, `200`
 on success (including deduplicated deliveries), `502` if re-verification
 against the provider fails.
 
-#### `loadConfig(): PayBridgeConfig`
+#### `loadConfig(): SwitchpayConfig`
 
 Reads and validates the [environment variables](#environment-variables) at
-runtime. Throws `PayBridgeError` with code `MISSING_CONFIG` or `INVALID_KEY`
+runtime. Throws `SwitchpayError` with code `MISSING_CONFIG` or `INVALID_KEY`
 if something is missing or malformed. You generally won't call this directly
 — `initTransaction`, `verifyTransaction`, and `handleWebhook` call it for you.
 
 #### `getActiveProvider(): PaymentProvider`
 
-Resolves the adapter for whichever provider `PAYBRIDGE_PROVIDER` selects.
+Resolves the adapter for whichever provider `SWITCHPAY_PROVIDER` selects.
 Exposed for advanced use cases (e.g. calling provider methods directly); most
 consumers won't need this.
 
-#### `PayBridgeError`
+#### `SwitchpayError`
 
-The only error type PayBridge ever throws.
+The only error type Switchpay ever throws.
 
 ```ts
-class PayBridgeError extends Error {
-  code: PayBridgeErrorCode;
+class SwitchpayError extends Error {
+  code: SwitchpayErrorCode;
   provider?: "paystack" | "flutterwave";
   originalError?: unknown;
 }
@@ -279,7 +270,7 @@ provider's raw minor-unit amounts directly (e.g. in a custom integration).
 
 ---
 
-### `paybridge/react`
+### `switchpay/react`
 
 #### `<PayButton />`
 
@@ -293,18 +284,18 @@ interface PayButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   currency?: string;
   metadata?: Record<string, unknown>;
   onSuccess?: (tx: VerifyResultLike) => void;
-  onError?: (err: PayBridgeErrorLike) => void;
+  onError?: (err: SwitchpayErrorLike) => void;
   onCancel?: () => void;
   // ...plus className, disabled, children, and any other standard <button> prop
 }
 ```
 
-#### `usePayBridge()`
+#### `useSwitchpay()`
 
 The hook `<PayButton />` is built on. Use it directly for a fully custom UI.
 
 ```ts
-function usePayBridge(): {
+function useSwitchpay(): {
   pay: (params: {
     amount: number;
     email: string;
@@ -313,21 +304,21 @@ function usePayBridge(): {
   }) => Promise<void>;
   status: "idle" | "processing" | "success" | "error" | "cancelled";
   transaction: VerifyResultLike | null;
-  error: PayBridgeErrorLike | null;
+  error: SwitchpayErrorLike | null;
   reset: () => void;
 };
 ```
 
-Internally, `pay()` posts to `/api/paybridge/init`, opens the provider's
+Internally, `pay()` posts to `/api/switchpay/init`, opens the provider's
 hosted checkout in a popup, waits for it to close, then calls
-`/api/paybridge/verify` and updates `status`/`transaction` accordingly. If
+`/api/switchpay/verify` and updates `status`/`transaction` accordingly. If
 the popup is blocked by the browser, it falls back to a full-page redirect.
 
 ```tsx
-import { usePayBridge } from "paybridge/react";
+import { useSwitchpay } from "switchpay/react";
 
 function CustomCheckout() {
-  const { pay, status, transaction, error } = usePayBridge();
+  const { pay, status, transaction, error } = useSwitchpay();
 
   return (
     <div>
@@ -343,18 +334,18 @@ function CustomCheckout() {
 
 ---
 
-### `paybridge/next`
+### `switchpay/next`
 
 #### `GET`, `POST` (zero-config)
 
 Default App Router handlers with no lifecycle callbacks wired up.
 
 ```ts
-// app/api/paybridge/[...route]/route.ts
-export { GET, POST } from "paybridge/next";
+// app/api/switchpay/[...route]/route.ts
+export { GET, POST } from "switchpay/next";
 ```
 
-Handles three route segments under `/api/paybridge/`: `init`, `verify`,
+Handles three route segments under `/api/switchpay/`: `init`, `verify`,
 `webhook`.
 
 #### `createHandler(options?)`
@@ -370,8 +361,8 @@ webhook signature verification sees the exact original request bytes rather
 than a re-serialized copy.
 
 ```ts
-// pages/api/paybridge/[...route].ts
-import { buildPagesHandler, config } from "paybridge/next";
+// pages/api/switchpay/[...route].ts
+import { buildPagesHandler, config } from "switchpay/next";
 
 export { config };
 export default buildPagesHandler(); // or buildPagesHandler({ onPaymentSuccess, onPaymentFailed })
@@ -381,9 +372,9 @@ export default buildPagesHandler(); // or buildPagesHandler({ onPaymentSuccess, 
 
 ### CLI
 
-#### `npx paybridge init`
+#### `npx switchpay init`
 
-Scaffolds PayBridge into the current Next.js project:
+Scaffolds Switchpay into the current Next.js project:
 
 1. Detects App Router (`app/` or `src/app/`) vs Pages Router (`pages/` or
    `src/pages/`). Exits with a warning and writes nothing if neither is found.
@@ -394,7 +385,7 @@ Scaffolds PayBridge into the current Next.js project:
 5. Adds `.env.local` to `.gitignore` if it isn't already there.
 6. Prints a "next steps" summary.
 
-No global install needed — `npx paybridge init` works directly.
+No global install needed — `npx switchpay init` works directly.
 
 ---
 
@@ -402,14 +393,14 @@ No global install needed — `npx paybridge init` works directly.
 
 | Variable | Required | Exposed to browser | Purpose |
 |---|---|---|---|
-| `PAYBRIDGE_PROVIDER` | Yes | No | `"paystack"` or `"flutterwave"` — selects the active adapter |
-| `PAYBRIDGE_SECRET_KEY` | Yes | No | Provider secret key, used server-side only |
-| `NEXT_PUBLIC_PAYBRIDGE_PUBLIC_KEY` | Yes | Yes | Provider public key |
-| `PAYBRIDGE_WEBHOOK_SECRET` | Yes | No | Verifies webhook signatures. For Paystack, same as the secret key. For Flutterwave, the dashboard-configured hash. |
-| `PAYBRIDGE_CURRENCY` | No (default `NGN`) | No | Default currency if not passed per-transaction |
-| `PAYBRIDGE_CALLBACK_URL` | No | No | Redirect URL after checkout |
+| `SWITCHPAY_PROVIDER` | Yes | No | `"paystack"` or `"flutterwave"` — selects the active adapter |
+| `SWITCHPAY_SECRET_KEY` | Yes | No | Provider secret key, used server-side only |
+| `NEXT_PUBLIC_SWITCHPAY_PUBLIC_KEY` | Yes | Yes | Provider public key |
+| `SWITCHPAY_WEBHOOK_SECRET` | Yes | No | Verifies webhook signatures. For Paystack, same as the secret key. For Flutterwave, the dashboard-configured hash. |
+| `SWITCHPAY_CURRENCY` | No (default `NGN`) | No | Default currency if not passed per-transaction |
+| `SWITCHPAY_CALLBACK_URL` | No | No | Redirect URL after checkout |
 
-These exact variable names are part of PayBridge's public contract — don't rename them.
+These exact variable names are part of Switchpay's public contract — don't rename them.
 
 ---
 
@@ -422,17 +413,17 @@ These exact variable names are part of PayBridge's public contract — don't ren
 | `NETWORK_ERROR` | Request to the provider's API failed |
 | `VERIFICATION_FAILED` | `verifyTransaction` could not confirm the transaction |
 | `INVALID_WEBHOOK_SIGNATURE` | Webhook signature did not match |
-| `UNSUPPORTED_PROVIDER` | `PAYBRIDGE_PROVIDER` is not `"paystack"` or `"flutterwave"` |
+| `UNSUPPORTED_PROVIDER` | `SWITCHPAY_PROVIDER` is not `"paystack"` or `"flutterwave"` |
 | `UNSUPPORTED_CURRENCY` | Reserved for future use |
 
-Every error thrown by PayBridge is a `PayBridgeError` carrying one of these codes.
+Every error thrown by Switchpay is a `SwitchpayError` carrying one of these codes.
 
 ---
 
 ## Security notes
 
-- `PAYBRIDGE_SECRET_KEY` and `PAYBRIDGE_WEBHOOK_SECRET` are never read in
-  browser code — only `NEXT_PUBLIC_PAYBRIDGE_PUBLIC_KEY` is exposed client-side.
+- `SWITCHPAY_SECRET_KEY` and `SWITCHPAY_WEBHOOK_SECRET` are never read in
+  browser code — only `NEXT_PUBLIC_SWITCHPAY_PUBLIC_KEY` is exposed client-side.
 - Every webhook is signature-verified (HMAC-SHA512 for Paystack, static hash
   comparison for Flutterwave) before its payload is trusted. Invalid or
   missing signatures are rejected with a `401` before any callback runs.
@@ -447,7 +438,7 @@ Every error thrown by PayBridge is a `PayBridgeError` carrying one of these code
 
 ---
 
-## What PayBridge does not do (by design)
+## What Switchpay does not do (by design)
 
 - Payouts / transfers (sending money out)
 - Subscriptions / recurring billing

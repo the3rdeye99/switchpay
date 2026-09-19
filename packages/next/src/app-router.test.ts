@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("paybridge", () => {
-  class PayBridgeError extends Error {
+vi.mock("switchpay", () => {
+  class SwitchpayError extends Error {
     code: string;
     constructor(code: string, message: string) {
       super(message);
@@ -12,11 +12,11 @@ vi.mock("paybridge", () => {
     initTransaction: vi.fn(),
     verifyTransaction: vi.fn(),
     handleWebhook: vi.fn(),
-    PayBridgeError,
+    SwitchpayError,
   };
 });
 
-import { initTransaction, verifyTransaction, handleWebhook } from "paybridge";
+import { initTransaction, verifyTransaction, handleWebhook } from "switchpay";
 import { buildGetHandler, buildPostHandler } from "./app-router.js";
 
 function makeRequest(url: string, init?: RequestInit): Request {
@@ -32,7 +32,7 @@ beforeEach(() => {
 describe("app-router GET handler", () => {
   it("returns 400 when 'reference' query param is missing on /verify", async () => {
     const GET = buildGetHandler();
-    const res = await GET(makeRequest("http://localhost/api/paybridge/verify"), {
+    const res = await GET(makeRequest("http://localhost/api/switchpay/verify"), {
       params: { route: ["verify"] },
     });
     expect(res.status).toBe(400);
@@ -50,7 +50,7 @@ describe("app-router GET handler", () => {
     });
 
     const GET = buildGetHandler();
-    const res = await GET(makeRequest("http://localhost/api/paybridge/verify?reference=ref_1"), {
+    const res = await GET(makeRequest("http://localhost/api/switchpay/verify?reference=ref_1"), {
       params: { route: ["verify"] },
     });
 
@@ -62,7 +62,7 @@ describe("app-router GET handler", () => {
 
   it("returns 404 for an unsupported route segment", async () => {
     const GET = buildGetHandler();
-    const res = await GET(makeRequest("http://localhost/api/paybridge/bogus"), {
+    const res = await GET(makeRequest("http://localhost/api/switchpay/bogus"), {
       params: { route: ["bogus"] },
     });
     expect(res.status).toBe(404);
@@ -78,7 +78,7 @@ describe("app-router POST handler", () => {
 
     const POST = buildPostHandler();
     const res = await POST(
-      makeRequest("http://localhost/api/paybridge/init", {
+      makeRequest("http://localhost/api/switchpay/init", {
         method: "POST",
         body: JSON.stringify({ amount: 5000, email: "a@b.com" }),
       }),
@@ -95,7 +95,7 @@ describe("app-router POST handler", () => {
 
     const POST = buildPostHandler({ onPaymentSuccess: vi.fn() });
     const res = await POST(
-      makeRequest("http://localhost/api/paybridge/webhook", {
+      makeRequest("http://localhost/api/switchpay/webhook", {
         method: "POST",
         body: "raw-body",
         headers: { "x-paystack-signature": "sig" },
@@ -113,7 +113,7 @@ describe("app-router POST handler", () => {
 
   it("returns 404 for an unsupported route segment", async () => {
     const POST = buildPostHandler();
-    const res = await POST(makeRequest("http://localhost/api/paybridge/bogus", { method: "POST" }), {
+    const res = await POST(makeRequest("http://localhost/api/switchpay/bogus", { method: "POST" }), {
       params: { route: ["bogus"] },
     });
     expect(res.status).toBe(404);

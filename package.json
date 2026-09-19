@@ -1,5 +1,5 @@
 {
-  "name": "paybridge-monorepo",
+  "name": "switchpay-monorepo",
   "private": true,
   "license": "MIT",
   "packageManager": "pnpm@9.0.0",

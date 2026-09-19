@@ -24,11 +24,11 @@ export async function initCommand(projectRoot: string = process.cwd()): Promise<
           projectRoot,
           detection.rootDir!,
           "api",
-          "paybridge",
+          "switchpay",
           "[...route]",
           "route.ts"
         )
-      : path.join(projectRoot, detection.rootDir!, "api", "paybridge", "[...route].ts");
+      : path.join(projectRoot, detection.rootDir!, "api", "switchpay", "[...route].ts");
 
   const templateName =
     detection.type === "app" ? "app-router-route.ts.tmpl" : "pages-router-route.ts.tmpl";
@@ -95,17 +95,12 @@ function printNextSteps(routerType: "app" | "pages"): void {
   console.log(`
 Next steps:
   1. Fill in your provider keys in .env.local
-     (PAYBRIDGE_PROVIDER, PAYBRIDGE_SECRET_KEY, NEXT_PUBLIC_PAYBRIDGE_PUBLIC_KEY, PAYBRIDGE_WEBHOOK_SECRET)
-  2. Install the SDK if you haven't already: npm install paybridge
-  3. Add a <PayButton /> from "paybridge/react" to any page
-  4. Point your provider's webhook URL at /api/paybridge/webhook
+     (SWITCHPAY_PROVIDER, SWITCHPAY_SECRET_KEY, NEXT_PUBLIC_SWITCHPAY_PUBLIC_KEY, SWITCHPAY_WEBHOOK_SECRET)
+  2. Install the SDK if you haven't already: npm install switchpay
+  3. Add a <PayButton /> from "switchpay/react" to any page
+  4. Point your provider's webhook URL at /api/switchpay/webhook
   5. Run your dev server and make a test payment
 
 Router detected: ${routerType === "app" ? "App Router" : "Pages Router"}
-
-NOTE: This summary is a placeholder — the build spec calls for it to match
-the wording on the docs' Quickstart page exactly, but that page wasn't
-provided alongside the build spec. Flagging rather than guessing at final
-copy — swap this in once the docs are available.
 `);
 }

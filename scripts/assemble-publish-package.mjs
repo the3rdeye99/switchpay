@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * PayBridge is published as a single npm package ("paybridge") with three
+ * Switchpay is published as a single npm package ("switchpay") with three
  * subpath exports (".", "./react", "./next") plus a CLI bin. Internally,
  * each of those is developed as its own workspace package for isolated
  * building/testing/type-checking. This script stitches their build output

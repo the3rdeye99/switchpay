@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { PayBridgeError } from "../errors.js";
+import { SwitchpayError } from "../errors.js";
 import type {
   InitParams,
   InitResult,
@@ -7,7 +7,7 @@ import type {
   WebhookEvent,
   PaymentProvider,
 } from "./types.js";
-import type { PayBridgeConfig } from "../server/config.js";
+import type { SwitchpayConfig } from "../server/config.js";
 
 const FLUTTERWAVE_BASE_URL = "https://api.flutterwave.com/v3";
 
@@ -61,12 +61,12 @@ function mapEventType(
   return "payment.failed";
 }
 
-export function flutterwaveAdapter(config: PayBridgeConfig): PaymentProvider {
+export function flutterwaveAdapter(config: SwitchpayConfig): PaymentProvider {
   return {
     async initTransaction(params: InitParams): Promise<InitResult> {
       const currency = params.currency ?? config.currency;
       // Flutterwave requires a unique tx_ref we generate client-side.
-      const txRef = `pb_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+      const txRef = `sw_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 
       try {
         const res = await fetch(`${FLUTTERWAVE_BASE_URL}/payments`, {
@@ -88,7 +88,7 @@ export function flutterwaveAdapter(config: PayBridgeConfig): PaymentProvider {
         const json = (await res.json()) as FlutterwaveInitResponse;
 
         if (!res.ok || json.status !== "success" || !json.data) {
-          throw new PayBridgeError(
+          throw new SwitchpayError(
             "NETWORK_ERROR",
             `Flutterwave init failed: ${json.message ?? res.statusText}`,
             { provider: "flutterwave", originalError: json }
@@ -100,8 +100,8 @@ export function flutterwaveAdapter(config: PayBridgeConfig): PaymentProvider {
           checkoutUrl: json.data.link,
         };
       } catch (err) {
-        if (err instanceof PayBridgeError) throw err;
-        throw new PayBridgeError("NETWORK_ERROR", "Failed to reach Flutterwave API.", {
+        if (err instanceof SwitchpayError) throw err;
+        throw new SwitchpayError("NETWORK_ERROR", "Failed to reach Flutterwave API.", {
           provider: "flutterwave",
           originalError: err,
         });
@@ -122,7 +122,7 @@ export function flutterwaveAdapter(config: PayBridgeConfig): PaymentProvider {
         const json = (await res.json()) as FlutterwaveVerifyResponse;
 
         if (!res.ok || json.status !== "success" || !json.data) {
-          throw new PayBridgeError(
+          throw new SwitchpayError(
             "VERIFICATION_FAILED",
             `Flutterwave verification failed: ${json.message ?? res.statusText}`,
             { provider: "flutterwave", originalError: json }
@@ -140,8 +140,8 @@ export function flutterwaveAdapter(config: PayBridgeConfig): PaymentProvider {
           paidAt: d.created_at,
         };
       } catch (err) {
-        if (err instanceof PayBridgeError) throw err;
-        throw new PayBridgeError(
+        if (err instanceof SwitchpayError) throw err;
+        throw new SwitchpayError(
           "VERIFICATION_FAILED",
           "Failed to reach Flutterwave API during verification.",
           { provider: "flutterwave", originalError: err }

@@ -1,4 +1,4 @@
-import { PayBridgeError } from "../errors.js";
+import { SwitchpayError } from "../errors.js";
 import { loadConfig } from "../server/config.js";
 import { paystackAdapter } from "./paystack.js";
 import { flutterwaveAdapter } from "./flutterwave.js";
@@ -6,7 +6,7 @@ import type { PaymentProvider } from "./types.js";
 
 /**
  * Resolves and returns the active PaymentProvider adapter based on
- * PAYBRIDGE_PROVIDER. This is the single place where the provider
+ * SWITCHPAY_PROVIDER. This is the single place where the provider
  * switch happens — nothing above this layer should branch on provider.
  */
 export function getActiveProvider(): PaymentProvider {
@@ -19,7 +19,7 @@ export function getActiveProvider(): PaymentProvider {
     default:
       // Exhaustiveness guard — loadConfig already validates this,
       // so this branch should be unreachable in practice.
-      throw new PayBridgeError(
+      throw new SwitchpayError(
         "UNSUPPORTED_PROVIDER",
         `Unknown provider: ${config.provider as string}`
       );

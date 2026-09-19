@@ -1,8 +1,8 @@
 {
-  "name": "paybridge-next-internal",
+  "name": "switchpay-next-internal",
   "version": "0.1.0",
   "private": true,
-  "description": "Next.js App Router and Pages Router adapters for PayBridge (internal workspace package — published as paybridge/next, see scripts/assemble-publish-package.mjs)",
+  "description": "Next.js App Router and Pages Router adapters for Switchpay (internal workspace package — published as switchpay/next, see scripts/assemble-publish-package.mjs)",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -25,14 +25,14 @@
   },
   "peerDependencies": {
     "next": ">=13.0.0",
-    "paybridge": "workspace:*"
+    "switchpay": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0",
     "next": "^14.0.0",
-    "paybridge": "workspace:*",
+    "switchpay": "workspace:*",
     "@types/node": "^20.0.0"
   }
 }

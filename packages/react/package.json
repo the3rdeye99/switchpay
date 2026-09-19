@@ -1,8 +1,8 @@
 {
-  "name": "paybridge-react-internal",
+  "name": "switchpay-react-internal",
   "version": "0.1.0",
   "private": true,
-  "description": "React hook and components for PayBridge (internal workspace package — published as paybridge/react, see scripts/assemble-publish-package.mjs)",
+  "description": "React hook and components for Switchpay (internal workspace package — published as switchpay/react, see scripts/assemble-publish-package.mjs)",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.cjs",

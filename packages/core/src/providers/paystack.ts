@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { PayBridgeError } from "../errors.js";
+import { SwitchpayError } from "../errors.js";
 import { toMinorUnits, toMajorUnits } from "../currency.js";
 import type {
   InitParams,
@@ -8,7 +8,7 @@ import type {
   WebhookEvent,
   PaymentProvider,
 } from "./types.js";
-import type { PayBridgeConfig } from "../server/config.js";
+import type { SwitchpayConfig } from "../server/config.js";
 
 const PAYSTACK_BASE_URL = "https://api.paystack.co";
 
@@ -57,7 +57,7 @@ function mapEventType(event: string): "payment.success" | "payment.failed" {
   return event === "charge.success" ? "payment.success" : "payment.failed";
 }
 
-export function paystackAdapter(config: PayBridgeConfig): PaymentProvider {
+export function paystackAdapter(config: SwitchpayConfig): PaymentProvider {
   return {
     async initTransaction(params: InitParams): Promise<InitResult> {
       const currency = params.currency ?? config.currency;
@@ -80,7 +80,7 @@ export function paystackAdapter(config: PayBridgeConfig): PaymentProvider {
         const json = (await res.json()) as PaystackInitResponse;
 
         if (!res.ok || !json.status || !json.data) {
-          throw new PayBridgeError(
+          throw new SwitchpayError(
             "NETWORK_ERROR",
             `Paystack init failed: ${json.message ?? res.statusText}`,
             { provider: "paystack", originalError: json }
@@ -92,8 +92,8 @@ export function paystackAdapter(config: PayBridgeConfig): PaymentProvider {
           checkoutUrl: json.data.authorization_url,
         };
       } catch (err) {
-        if (err instanceof PayBridgeError) throw err;
-        throw new PayBridgeError("NETWORK_ERROR", "Failed to reach Paystack API.", {
+        if (err instanceof SwitchpayError) throw err;
+        throw new SwitchpayError("NETWORK_ERROR", "Failed to reach Paystack API.", {
           provider: "paystack",
           originalError: err,
         });
@@ -112,7 +112,7 @@ export function paystackAdapter(config: PayBridgeConfig): PaymentProvider {
         const json = (await res.json()) as PaystackVerifyResponse;
 
         if (!res.ok || !json.status || !json.data) {
-          throw new PayBridgeError(
+          throw new SwitchpayError(
             "VERIFICATION_FAILED",
             `Paystack verification failed: ${json.message ?? res.statusText}`,
             { provider: "paystack", originalError: json }
@@ -130,8 +130,8 @@ export function paystackAdapter(config: PayBridgeConfig): PaymentProvider {
           paidAt: d.paid_at,
         };
       } catch (err) {
-        if (err instanceof PayBridgeError) throw err;
-        throw new PayBridgeError(
+        if (err instanceof SwitchpayError) throw err;
+        throw new SwitchpayError(
           "VERIFICATION_FAILED",
           "Failed to reach Paystack API during verification.",
           { provider: "paystack", originalError: err }

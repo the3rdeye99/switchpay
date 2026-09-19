@@ -13,7 +13,7 @@ import { confirm } from "../prompt.js";
 let tmpDir: string;
 
 beforeEach(() => {
-  tmpDir = mkdtempSync(path.join(os.tmpdir(), "paybridge-cli-test-"));
+  tmpDir = mkdtempSync(path.join(os.tmpdir(), "switchpay-cli-test-"));
   vi.mocked(confirm).mockReset();
 });
 
@@ -36,7 +36,7 @@ describe("initCommand", () => {
 
     await initCommand(tmpDir);
 
-    const routeFile = path.join(tmpDir, "app", "api", "paybridge", "[...route]", "route.ts");
+    const routeFile = path.join(tmpDir, "app", "api", "switchpay", "[...route]", "route.ts");
     expect(existsSync(routeFile)).toBe(true);
     expect(existsSync(path.join(tmpDir, ".env.local"))).toBe(true);
   });
@@ -53,8 +53,8 @@ describe("initCommand", () => {
   });
 
   it("prompts before overwriting an existing route file, and skips on decline", async () => {
-    mkdirSync(path.join(tmpDir, "app", "api", "paybridge", "[...route]"), { recursive: true });
-    const routeFile = path.join(tmpDir, "app", "api", "paybridge", "[...route]", "route.ts");
+    mkdirSync(path.join(tmpDir, "app", "api", "switchpay", "[...route]"), { recursive: true });
+    const routeFile = path.join(tmpDir, "app", "api", "switchpay", "[...route]", "route.ts");
     writeFileSync(routeFile, "// custom content\n");
     vi.mocked(confirm).mockResolvedValue(false);
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -66,8 +66,8 @@ describe("initCommand", () => {
   });
 
   it("overwrites the route file when the user confirms", async () => {
-    mkdirSync(path.join(tmpDir, "app", "api", "paybridge", "[...route]"), { recursive: true });
-    const routeFile = path.join(tmpDir, "app", "api", "paybridge", "[...route]", "route.ts");
+    mkdirSync(path.join(tmpDir, "app", "api", "switchpay", "[...route]"), { recursive: true });
+    const routeFile = path.join(tmpDir, "app", "api", "switchpay", "[...route]", "route.ts");
     writeFileSync(routeFile, "// custom content\n");
     vi.mocked(confirm).mockResolvedValue(true);
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -117,7 +117,7 @@ describe("initCommand", () => {
 
     await initCommand(tmpDir);
 
-    const routeFile = path.join(tmpDir, "pages", "api", "paybridge", "[...route].ts");
+    const routeFile = path.join(tmpDir, "pages", "api", "switchpay", "[...route].ts");
     expect(existsSync(routeFile)).toBe(true);
   });
 });

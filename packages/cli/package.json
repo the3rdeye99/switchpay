@@ -1,12 +1,12 @@
 {
-  "name": "paybridge-cli-internal",
+  "name": "switchpay-cli-internal",
   "version": "0.1.0",
   "private": true,
-  "description": "CLI for scaffolding PayBridge into a Next.js project (internal workspace package — published as the paybridge bin, see scripts/assemble-publish-package.mjs)",
+  "description": "CLI for scaffolding Switchpay into a Next.js project (internal workspace package — published as the switchpay bin, see scripts/assemble-publish-package.mjs)",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "paybridge": "./dist/index.js"
+    "switchpay": "./dist/index.js"
   },
   "files": ["dist", "src/templates"],
   "scripts": {

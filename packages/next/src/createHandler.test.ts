@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock("paybridge", () => ({
+vi.mock("switchpay", () => ({
   initTransaction: vi.fn(),
   verifyTransaction: vi.fn(),
   handleWebhook: vi.fn(async () => new Response(JSON.stringify({ received: true }), { status: 200 })),
-  PayBridgeError: class extends Error {},
+  SwitchpayError: class extends Error {},
 }));
 
-import { handleWebhook } from "paybridge";
+import { handleWebhook } from "switchpay";
 import { createHandler } from "./createHandler.js";
 
 describe("createHandler", () => {
@@ -22,7 +22,7 @@ describe("createHandler", () => {
     const { POST } = createHandler({ onPaymentSuccess });
 
     await POST(
-      new Request("http://localhost/api/paybridge/webhook", {
+      new Request("http://localhost/api/switchpay/webhook", {
         method: "POST",
         body: "raw",
       }),

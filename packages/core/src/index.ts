@@ -9,15 +9,15 @@ export type {
 } from "./providers/types.js";
 
 // Errors
-export { PayBridgeError } from "./errors.js";
-export type { PayBridgeErrorCode } from "./errors.js";
+export { SwitchpayError } from "./errors.js";
+export type { SwitchpayErrorCode } from "./errors.js";
 
 // Currency helpers
 export { toMinorUnits, toMajorUnits } from "./currency.js";
 
 // Config
 export { loadConfig } from "./server/config.js";
-export type { PayBridgeConfig } from "./server/config.js";
+export type { SwitchpayConfig } from "./server/config.js";
 
 // Provider registry
 export { getActiveProvider } from "./providers/registry.js";

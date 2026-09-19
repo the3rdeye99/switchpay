@@ -1,4 +1,4 @@
-export interface PayBridgeErrorLike {
+export interface SwitchpayErrorLike {
   code: string;
   message: string;
   provider?: "paystack" | "flutterwave";
@@ -14,7 +14,7 @@ export interface VerifyResultLike {
   paidAt: string | null;
 }
 
-export type PayBridgeStatus = "idle" | "processing" | "success" | "error" | "cancelled";
+export type SwitchpayStatus = "idle" | "processing" | "success" | "error" | "cancelled";
 
 export interface PayParams {
   amount: number;
@@ -23,10 +23,10 @@ export interface PayParams {
   metadata?: Record<string, unknown>;
 }
 
-export interface UsePayBridgeResult {
+export interface UseSwitchpayResult {
   pay: (params: PayParams) => Promise<void>;
-  status: PayBridgeStatus;
+  status: SwitchpayStatus;
   transaction: VerifyResultLike | null;
-  error: PayBridgeErrorLike | null;
+  error: SwitchpayErrorLike | null;
   reset: () => void;
 }

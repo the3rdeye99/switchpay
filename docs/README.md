@@ -1,16 +1,27 @@
-# Docs
+# Switchpay Documentation
 
-The build spec (Section 16) states that complete user-facing documentation
-(15 pages, quickstart → API reference) was "already written" and provided
-separately, and that it should be treated as the source of truth for naming,
-wording, and public API shape.
+Welcome to the Switchpay user documentation. Fifteen pages, from quickstart
+through API reference. These docs describe the actual shipped API surface —
+naming, props, environment variables, and exact response shapes are
+guaranteed to match what the SDK exports.
 
-That documentation was **not** included alongside the build spec PDF in this
-project. Rather than inventing 15 pages of docs and risking a mismatch with
-the real source of truth (per the spec's own instruction to flag conflicts
-rather than silently pick), this is a placeholder.
+## Table of contents
 
-**Action needed:** drop the real docs pages into this folder, then reconcile
-them against the shipped API surface (per the Phase 13 checklist: "verify all
-docs pages match the actual shipped API exactly"). The README.md at the repo
-root currently stands in as a working quickstart in the meantime.
+1. [Overview](01-overview.md) — what Switchpay is, why it exists, what it does and doesn't do
+2. [Installation](02-installation.md) — requirements and install steps
+3. [Quickstart](03-quickstart.md) — first payment in under 15 minutes
+4. [Configuration](04-configuration.md) — every environment variable and key format
+5. [Core API](05-core-api.md) — `initTransaction`, `verifyTransaction`, `loadConfig`, `getActiveProvider`, `SwitchpayError`
+6. [React](06-react.md) — `<PayButton />` and `useSwitchpay()`
+7. [Next.js: App Router](07-next-app-router.md) — route handlers and `createHandler()`
+8. [Next.js: Pages Router](08-next-pages-router.md) — `buildPagesHandler()` and `config`
+9. [Webhooks](09-webhooks.md) — signature verification, `handleWebhook`, idempotency
+10. [Switching providers](10-switching-providers.md) — Paystack ↔ Flutterwave in one line
+11. [Error handling](11-errors.md) — error codes and how to handle them
+12. [Currency & amounts](12-currency.md) — major vs minor units, conversion helpers
+13. [Security](13-security.md) — threat model and deployment guidance
+14. [CLI](14-cli.md) — `npx switchpay init`
+15. [API Reference](15-api-reference.md) — complete type-level reference
+
+Each page links to its neighbors; go in order, or jump straight to what you
+need.

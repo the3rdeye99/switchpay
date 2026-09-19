@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { usePayBridge } from "./usePayBridge.js";
+import { useSwitchpay } from "./useSwitchpay.js";
 
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.useRealTimers();
 });
 
-describe("usePayBridge", () => {
+describe("useSwitchpay", () => {
   it("starts in idle state", () => {
-    const { result } = renderHook(() => usePayBridge());
+    const { result } = renderHook(() => useSwitchpay());
     expect(result.current.status).toBe("idle");
     expect(result.current.transaction).toBeNull();
     expect(result.current.error).toBeNull();
@@ -48,7 +48,7 @@ describe("usePayBridge", () => {
     vi.stubGlobal("fetch", fetchMock);
     vi.useFakeTimers();
 
-    const { result } = renderHook(() => usePayBridge());
+    const { result } = renderHook(() => useSwitchpay());
 
     let payPromise!: Promise<void>;
     await act(async () => {
@@ -79,7 +79,7 @@ describe("usePayBridge", () => {
       vi.fn(async () => new Response(JSON.stringify({ code: "MISSING_CONFIG", message: "boom" }), { status: 400 }))
     );
 
-    const { result } = renderHook(() => usePayBridge());
+    const { result } = renderHook(() => useSwitchpay());
 
     await act(async () => {
       await result.current.pay({ amount: 5000, email: "customer@example.com" });
@@ -95,7 +95,7 @@ describe("usePayBridge", () => {
       vi.fn(async () => new Response(JSON.stringify({ code: "MISSING_CONFIG", message: "boom" }), { status: 400 }))
     );
 
-    const { result } = renderHook(() => usePayBridge());
+    const { result } = renderHook(() => useSwitchpay());
 
     await act(async () => {
       await result.current.pay({ amount: 5000, email: "customer@example.com" });

@@ -3,12 +3,12 @@ import {
   initTransaction,
   verifyTransaction,
   handleWebhook,
-  PayBridgeError,
+  SwitchpayError,
   type WebhookCallbacks,
-} from "paybridge";
+} from "switchpay";
 
 function sendError(res: NextApiResponse, err: unknown): void {
-  if (err instanceof PayBridgeError) {
+  if (err instanceof SwitchpayError) {
     const status = err.code === "INVALID_WEBHOOK_SIGNATURE" ? 401 : 400;
     res.status(status).json({ error: err.message, code: err.code });
     return;
@@ -33,7 +33,7 @@ async function readRawBody(req: NextApiRequest): Promise<string> {
  * Disables Next's automatic body parsing for this route. Required so that
  * webhook signature verification sees the exact original request bytes.
  * Export this as `config` from your API route file:
- *   export { config } from 'paybridge/next';
+ *   export { config } from 'switchpay/next';
  */
 export const config = {
   api: {
@@ -43,7 +43,7 @@ export const config = {
 
 /**
  * Builds a Pages Router API handler. Routes based on req.query.route.
- * Consumer wires this up at pages/api/paybridge/[...route].ts, and must
+ * Consumer wires this up at pages/api/switchpay/[...route].ts, and must
  * also export `config` (see above) so webhook signatures verify correctly.
  */
 export function buildPagesHandler(callbacks?: WebhookCallbacks) {
@@ -94,5 +94,5 @@ export function buildPagesHandler(callbacks?: WebhookCallbacks) {
   };
 }
 
-// Zero-config default export — `export { default } from 'paybridge/next/pages-router'`.
+// Zero-config default export — `export { default } from 'switchpay/next/pages-router'`.
 export default buildPagesHandler();

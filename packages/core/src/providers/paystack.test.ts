@@ -3,10 +3,10 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import crypto from "node:crypto";
 import { paystackAdapter } from "./paystack.js";
-import { PayBridgeError } from "../errors.js";
-import type { PayBridgeConfig } from "../server/config.js";
+import { SwitchpayError } from "../errors.js";
+import type { SwitchpayConfig } from "../server/config.js";
 
-const config: PayBridgeConfig = {
+const config: SwitchpayConfig = {
   provider: "paystack",
   secretKey: "sk_test_123",
   publicKey: "pk_test_123",
@@ -50,7 +50,7 @@ describe("paystackAdapter.initTransaction", () => {
     });
   });
 
-  it("throws PayBridgeError(NETWORK_ERROR) on provider failure", async () => {
+  it("throws SwitchpayError(NETWORK_ERROR) on provider failure", async () => {
     server.use(
       http.post("https://api.paystack.co/transaction/initialize", () =>
         HttpResponse.json({ status: false, message: "Invalid key" }, { status: 401 })
@@ -63,7 +63,7 @@ describe("paystackAdapter.initTransaction", () => {
     ).rejects.toMatchObject({ code: "NETWORK_ERROR" });
   });
 
-  it("throws PayBridgeError on malformed response", async () => {
+  it("throws SwitchpayError on malformed response", async () => {
     server.use(
       http.post("https://api.paystack.co/transaction/initialize", () =>
         HttpResponse.json({ unexpected: "shape" })
@@ -74,7 +74,7 @@ describe("paystackAdapter.initTransaction", () => {
     const err = await adapter
       .initTransaction({ amount: 5000, email: "test@example.com" })
       .catch((e) => e);
-    expect(err).toBeInstanceOf(PayBridgeError);
+    expect(err).toBeInstanceOf(SwitchpayError);
   });
 });
 
@@ -112,7 +112,7 @@ describe("paystackAdapter.verifyTransaction", () => {
     });
   });
 
-  it("throws PayBridgeError(VERIFICATION_FAILED) on failure", async () => {
+  it("throws SwitchpayError(VERIFICATION_FAILED) on failure", async () => {
     server.use(
       http.get("https://api.paystack.co/transaction/verify/:ref", () =>
         HttpResponse.json({ status: false, message: "not found" }, { status: 404 })
@@ -125,7 +125,7 @@ describe("paystackAdapter.verifyTransaction", () => {
     });
   });
 
-  it("throws PayBridgeError on malformed response", async () => {
+  it("throws SwitchpayError on malformed response", async () => {
     server.use(
       http.get("https://api.paystack.co/transaction/verify/:ref", () =>
         HttpResponse.json({ garbage: true })
@@ -134,7 +134,7 @@ describe("paystackAdapter.verifyTransaction", () => {
 
     const adapter = paystackAdapter(config);
     const err = await adapter.verifyTransaction("ref_123").catch((e) => e);
-    expect(err).toBeInstanceOf(PayBridgeError);
+    expect(err).toBeInstanceOf(SwitchpayError);
   });
 });
 

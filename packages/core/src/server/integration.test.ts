@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.stubEnv("PAYBRIDGE_PROVIDER", "paystack");
-vi.stubEnv("PAYBRIDGE_SECRET_KEY", "sk_test_123");
-vi.stubEnv("NEXT_PUBLIC_PAYBRIDGE_PUBLIC_KEY", "pk_test_123");
-vi.stubEnv("PAYBRIDGE_WEBHOOK_SECRET", "whsec_test_123");
+vi.stubEnv("SWITCHPAY_PROVIDER", "paystack");
+vi.stubEnv("SWITCHPAY_SECRET_KEY", "sk_test_123");
+vi.stubEnv("NEXT_PUBLIC_SWITCHPAY_PUBLIC_KEY", "pk_test_123");
+vi.stubEnv("SWITCHPAY_WEBHOOK_SECRET", "whsec_test_123");
 
 import { initTransaction } from "./initTransaction.js";
 import { verifyTransaction } from "./verifyTransaction.js";

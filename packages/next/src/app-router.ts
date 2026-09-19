@@ -2,9 +2,9 @@ import {
   initTransaction,
   verifyTransaction,
   handleWebhook,
-  PayBridgeError,
+  SwitchpayError,
   type WebhookCallbacks,
-} from "paybridge";
+} from "switchpay";
 
 export type RouteHandler = (
   req: Request,
@@ -19,7 +19,7 @@ function jsonResponse(body: unknown, status = 200): Response {
 }
 
 function errorResponse(err: unknown): Response {
-  if (err instanceof PayBridgeError) {
+  if (err instanceof SwitchpayError) {
     const status = err.code === "INVALID_WEBHOOK_SIGNATURE" ? 401 : 400;
     return jsonResponse({ error: err.message, code: err.code }, status);
   }
@@ -83,6 +83,6 @@ export function buildPostHandler(callbacks?: WebhookCallbacks): RouteHandler {
   };
 }
 
-// Zero-config defaults — importing { GET, POST } from 'paybridge/next' works out of the box.
+// Zero-config defaults — importing { GET, POST } from 'switchpay/next' works out of the box.
 export const GET: RouteHandler = buildGetHandler();
 export const POST: RouteHandler = buildPostHandler();
