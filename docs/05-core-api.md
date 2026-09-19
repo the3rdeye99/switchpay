@@ -43,7 +43,7 @@ Provider-specific notes:
 
 - **Paystack** generates the `reference` itself.
 - **Flutterwave** requires a unique `tx_ref`; Switchpay generates one
-  internally (`pb_<timestamp>_<random>`), and that value is returned as
+  internally (`sw_<timestamp>_<random>`), and that value is returned as
   `InitResult.reference`.
 
 ## `verifyTransaction(reference): Promise<VerifyResult>`

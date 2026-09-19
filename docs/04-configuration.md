@@ -93,9 +93,10 @@ SWITCHPAY_CALLBACK_URL=https://your-domain.com/callback
 
 ## Load order and precedence
 
-A per-transaction `currency` or `callbackUrl` passed to
-`initTransaction`/`PayButton`/`useSwitchpay` takes precedence over the
-environment variable. The env var is used when the per-call value is omitted.
+A per-transaction `callbackUrl` sent to `initTransaction` (or in the `/init`
+POST body) takes precedence over the environment variable, as does a
+`currency` passed to `initTransaction`, `<PayButton />`, or `useSwitchpay()`.
+The env var is used when the per-call value is omitted.
 
 ---
 

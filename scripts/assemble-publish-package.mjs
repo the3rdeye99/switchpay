@@ -11,7 +11,7 @@
  * so `npm publish` (or `pnpm publish`) from packages/core always assembles
  * a correct, self-contained package first.
  */
-import { cpSync, existsSync } from "node:fs";
+import { cpSync, existsSync, rmSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -34,6 +34,8 @@ for (const { from, to } of copies) {
     );
     process.exit(1);
   }
+  // Remove any previous copy first so stale files never leak into the tarball.
+  rmSync(dest, { recursive: true, force: true });
   cpSync(src, dest, { recursive: true });
   console.log(`[assemble-publish-package] Copied ${from} -> ${to}`);
 }

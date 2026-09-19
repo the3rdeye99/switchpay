@@ -11,8 +11,8 @@ integration code. One API. Either provider. Switch with an env var.
 - Tree-shakeable subpath exports — only bundle what you import
 - Zero database — you own transaction storage
 
-Full documentation: [docs/](./docs/) in this package, or the 15-page set at
-[github.com/the3rdeye99/switchpay](https://github.com/the3rdeye99/switchpay).
+Full documentation: the 15-page set at
+[github.com/the3rdeye99/switchpay](https://github.com/the3rdeye99/switchpay)
 
 ---
 

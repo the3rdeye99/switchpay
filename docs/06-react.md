@@ -121,6 +121,45 @@ How the popup flow ends depends on whether you set `SWITCHPAY_CALLBACK_URL`
 Because the callback page's path is your own code, the popup message only
 ever originates from a page you control.
 
+### `status`
+
+| Status | Meaning |
+|---|---|
+| `idle` | Nothing has happened yet (or `reset()` was called) |
+| `processing` | A payment is in flight |
+| `success` | Transaction verified as `success` |
+| `error` | Init or verification failed (see `error`) |
+| `cancelled` | User closed the checkout popup before anything confirmed |
+
+Note: a `pending` transaction result (user closed the popup before the
+provider confirmed) is surfaced as `cancelled`.
+
+### Example: custom checkout
+
+```tsx
+function CustomCheckout() {
+  const { pay, status, transaction, error } = useSwitchpay();
+
+  return (
+    <div>
+      <button
+        onClick={() => pay({ amount: 2500, email: "a@b.com" })}
+        disabled={status === "processing"}
+      >
+        {status === "processing" ? "Processing…" : "Pay"}
+      </button>
+      {status === "success" && <p>Paid! Ref: {transaction?.reference}</p>}
+      {status === "error" && <p>Error: {error?.message}</p>}
+    </div>
+  );
+}
+```
+
+### `reset()`
+
+Clears any in-flight timer and returns state to `idle` with a `null`
+transaction and error.
+
 ## `<SwitchpayCallback />`
 
 A self-closing checkout callback page. Mount it on the route your
@@ -170,47 +209,13 @@ Paystack's `reference`/`trxref` and Flutterwave's `tx_ref` are all handled.
 
 The callback URL is sent to the provider at payment time, so its path must be
 *publicly reachable* (not behind auth). Copy the real URL from your live
-domain into `SWITCHPAY_CALLBACK_URL` — e.g.
-`https://your-domain.com/callback`:
-
-### `status`
-
-| Status | Meaning |
-|---|---|
-| `idle` | Nothing has happened yet (or `reset()` was called) |
-| `processing` | A payment is in flight |
-| `success` | Transaction verified as `success` |
-| `error` | Init or verification failed (see `error`) |
-| `cancelled` | User closed the checkout popup before anything confirmed |
-
-Note: a `pending` transaction result (user closed the popup before the
-provider confirmed) is surfaced as `cancelled`.
-
-### Example: custom checkout
-
-```tsx
-function CustomCheckout() {
-  const { pay, status, transaction, error } = useSwitchpay();
-
-  return (
-    <div>
-      <button
-        onClick={() => pay({ amount: 2500, email: "a@b.com" })}
-        disabled={status === "processing"}
-      >
-        {status === "processing" ? "Processing…" : "Pay"}
-      </button>
-      {status === "success" && <p>Paid! Ref: {transaction?.reference}</p>}
-      {status === "error" && <p>Error: {error?.message}</p>}
-    </div>
-  );
-}
-```
-
-### `reset()`
-
-Clears any in-flight timer and returns state to `idle` with a `null`
-transaction and error.
+domain into `SWITCHPAY_CALLBACK_URL`, e.g.
+`https://your-domain.com/callback`, and mount `<SwitchpayCallback />` at that
+path. For example, with
+`SWITCHPAY_CALLBACK_URL=https://your-domain.com/callback`, the component
+lives at `app/callback/page.tsx` (App Router) or `pages/callback.tsx`
+(Pages Router). After paying, the popup (or tab) lands on that page, verifies,
+and signals the opener — see the lifecycle section above.
 
 ## Shape of the data
 
