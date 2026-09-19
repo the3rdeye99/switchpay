@@ -6,10 +6,22 @@ import {
   type WebhookCallbacks,
 } from "switchpay";
 
+export type RouteHandlerParams = { route: string[] };
+export type RouteHandlerParamsLike = RouteHandlerParams | Promise<RouteHandlerParams>;
+
 export type RouteHandler = (
   req: Request,
-  context: { params: { route: string[] } }
+  context: { params: RouteHandlerParamsLike }
 ) => Promise<Response>;
+
+/**
+ * Normalizes the params Next.js passes to route handlers. Next <15 passes
+ * the params object synchronously; Next >=15 passes a Promise. Awaiting
+ * handles both shapes, so this works on every supported Next version.
+ */
+async function resolveRouteParams(params: RouteHandlerParamsLike): Promise<RouteHandlerParams> {
+  return await params;
+}
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -32,7 +44,8 @@ function errorResponse(err: unknown): Response {
  */
 export function buildGetHandler(): RouteHandler {
   return async (req, context) => {
-    const segment = context.params.route[0];
+    const { route } = await resolveRouteParams(context.params);
+    const segment = route[0];
 
     if (segment === "verify") {
       const url = new URL(req.url);
@@ -58,7 +71,8 @@ export function buildGetHandler(): RouteHandler {
  */
 export function buildPostHandler(callbacks?: WebhookCallbacks): RouteHandler {
   return async (req, context) => {
-    const segment = context.params.route[0];
+    const { route } = await resolveRouteParams(context.params);
+    const segment = route[0];
 
     if (segment === "init") {
       try {

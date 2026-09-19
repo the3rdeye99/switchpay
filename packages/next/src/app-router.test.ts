@@ -67,6 +67,44 @@ describe("app-router GET handler", () => {
     });
     expect(res.status).toBe(404);
   });
+
+  it("handles Next >=15 async params (Promise) for both sync and async shapes", async () => {
+    vi.mocked(verifyTransaction).mockResolvedValue({
+      reference: "ref_async",
+      status: "success",
+      amount: 5000,
+      currency: "NGN",
+      email: "a@b.com",
+      metadata: {},
+      paidAt: null,
+    });
+
+    const GET = buildGetHandler();
+    const res = await GET(makeRequest("http://localhost/api/switchpay/verify?reference=ref_async"), {
+      params: Promise.resolve({ route: ["verify"] }),
+    });
+
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.reference).toBe("ref_async");
+    expect(verifyTransaction).toHaveBeenCalledWith("ref_async");
+
+    const POST = buildPostHandler();
+    vi.mocked(initTransaction).mockResolvedValue({
+      reference: "ref_async_post",
+      checkoutUrl: "https://checkout.example",
+    });
+    const resPost = await POST(
+      makeRequest("http://localhost/api/switchpay/init", {
+        method: "POST",
+        body: JSON.stringify({ amount: 5000, email: "a@b.com" }),
+      }),
+      { params: Promise.resolve({ route: ["init"] }) }
+    );
+
+    expect(resPost.status).toBe(200);
+    expect(initTransaction).toHaveBeenCalledWith({ amount: 5000, email: "a@b.com" });
+  });
 });
 
 describe("app-router POST handler", () => {

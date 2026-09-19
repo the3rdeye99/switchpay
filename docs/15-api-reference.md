@@ -7,7 +7,7 @@ Complete type-level reference for every public export, grouped by subpath.
 | Entry point | Contents |
 |---|---|
 | `switchpay` | Core server functions, types, errors, helpers |
-| `switchpay/react` | `<PayButton />`, `useSwitchpay()`, related types |
+| `switchpay/react` | `<PayButton />`, `useSwitchpay()`, `<SwitchpayCallback />`, related types |
 | `switchpay/next` | App Router + Pages Router handlers and types |
 
 ---
@@ -146,7 +146,28 @@ interface PayButtonProps
 }
 
 function PayButton(props: PayButtonProps): JSX.Element;
+
+function SwitchpayCallback(props: SwitchpayCallbackProps): JSX.Element;
 ```
+
+### Components — `SwitchpayCallback`
+
+A self-closing checkout callback page. Mount it on the route your
+`SWITCHPAY_CALLBACK_URL` points at (see [6. React](06-react.md)).
+
+```ts
+interface SwitchpayCallbackProps {
+  onSuccess?: (tx: VerifyResultLike) => void;
+  onError?: (err: SwitchpayErrorLike) => void;
+  successRedirectTo?: string;
+  failureRedirectTo?: string;
+  children?: (tx: VerifyResultLike | null) => ReactNode;
+}
+```
+
+Popup flow: verifies the reference, signals the parent tab via postMessage,
+and closes itself. Full-page (popup-blocked) flow: verifies in place and
+renders or redirects the result.
 
 ### Hooks
 
@@ -205,8 +226,10 @@ const POST: RouteHandler;
 
 type RouteHandler = (
   req: Request,
-  context: { params: { route: string[] } }
+  context: { params: { route: string[] } | Promise<{ route: string[] }> }
 ) => Promise<Response>;
+
+// Next 15+ passes params as a Promise; the same handler type works for both shapes.
 
 // Lifecycle-wrapper for App Router
 function createHandler(options?: CreateHandlerOptions): {

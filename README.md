@@ -47,7 +47,7 @@ integration code. One API. Either provider. Switch with an env var.
 npm install switchpay
 ```
 
-Requires Node.js 18+, Next.js 13+ (App Router or Pages Router), React 18+.
+Requires Node.js 18+, Next.js 13+ (App Router or Pages Router, including Next 15/16 async params), React 18+.
 
 ## Quickstart
 

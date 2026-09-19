@@ -11,6 +11,14 @@ const INIT_ENDPOINT = "/api/switchpay/init";
 const VERIFY_ENDPOINT = "/api/switchpay/verify";
 const POPUP_POLL_INTERVAL_MS = 500;
 
+/** postMessage protocol the self-closing callback page uses to signal the popup finished. */
+export const SWITCHPAY_POPUP_MESSAGE = "switchpay:popup-closed";
+export const SWITCHPAY_VERIFY_PARAM = "reference";
+
+export function parseCallbackReference(url: string = window.location.href): string | null {
+  return new URL(url).searchParams.get(SWITCHPAY_VERIFY_PARAM);
+}
+
 function toError(err: unknown): SwitchpayErrorLike {
   if (err && typeof err === "object" && "code" in err && "message" in err) {
     return err as SwitchpayErrorLike;
@@ -83,8 +91,21 @@ export function useSwitchpay(): UseSwitchpayResult {
     }
 
     await new Promise<void>((resolve) => {
+      const onMessage = (event: MessageEvent) => {
+        if (event.source !== popup) return;
+        const data =
+          typeof event.data === "string" ? event.data : (event.data as { type?: string } | null)?.type;
+        if (data === SWITCHPAY_POPUP_MESSAGE) {
+          if (pollTimer.current) clearInterval(pollTimer.current);
+          pollTimer.current = null;
+          window.removeEventListener("message", onMessage);
+          resolve();
+        }
+      };
+      window.addEventListener("message", onMessage);
       pollTimer.current = setInterval(() => {
         if (popup.closed) {
+          window.removeEventListener("message", onMessage);
           if (pollTimer.current) clearInterval(pollTimer.current);
           pollTimer.current = null;
           resolve();

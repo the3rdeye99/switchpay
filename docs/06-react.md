@@ -90,12 +90,88 @@ Takes `{ amount, email, currency?, metadata? }` and drives the whole flow:
 
 1. `POST { amount, email, currency, metadata }` to `/api/switchpay/init`
 2. Opens the returned `checkoutUrl` in a popup
-3. Polls for the popup to close
+3. Waits for the checkout to finish — either the popup closes itself, or the
+   provider redirects it to your callback page which signals completion
 4. `GET /api/switchpay/verify?reference=...`
 5. Sets `transaction` and resolves `status`
 
 If the popup is blocked by the browser, it falls back to a full-page redirect
 to the checkout URL.
+
+### The checkout lifecycle & `SWITCHPAY_CALLBACK_URL`
+
+How the popup flow ends depends on whether you set `SWITCHPAY_CALLBACK_URL`
+([4. Configuration](04-configuration.md)):
+
+- **No callback URL (default).** After payment, the provider's checkout page
+  closes the popup itself. The hook notices via the popup closing and runs
+  the verify step automatically. No extra work needed.
+- **Callback URL set.** After payment, the provider *redirects* the popup to
+  your callback page instead of closing it — the popup never closes, so the
+  hook would wait forever. You must mount the built-in
+  [`<SwitchpayCallback />`](#switchpaycallback-) on that page. It verifies
+  the transaction, posts a message back to the opener, then closes the popup,
+  which completes step 3 above and unblocks the hook's verify step.
+- **Popup blocked (fallback).** No popup exists to message. The page does a
+  full-page redirect to the checkout URL, and after payment the provider
+  sends the user back to your callback URL in that same tab. Here
+  `<SwitchpayCallback />` verifies in-place and renders (or redirects, via its
+  props) the result — there is no opener to signal.
+
+Because the callback page's path is your own code, the popup message only
+ever originates from a page you control.
+
+## `<SwitchpayCallback />`
+
+A self-closing checkout callback page. Mount it on the route your
+`SWITCHPAY_CALLBACK_URL` points at. It handles the two flows that
+`useSwitchpay()` alone cannot:
+
+```tsx
+import { SwitchpayCallback } from "switchpay/react";
+
+// App Router: app/callback/page.tsx
+export default function CallbackPage() {
+  return <SwitchpayCallback />;
+}
+```
+
+```tsx
+// Pages Router: pages/callback.tsx
+export default function CallbackPage() {
+  return <SwitchpayCallback />;
+}
+```
+
+```ts
+interface SwitchpayCallbackProps {
+  onSuccess?: (tx: VerifyResultLike) => void;
+  onError?: (err: SwitchpayErrorLike) => void;
+  successRedirectTo?: string; // navigate after a successful full-page verify
+  failureRedirectTo?: string; // navigate after a failed/pending full-page verify
+  children?: (tx: VerifyResultLike | null) => ReactNode; // custom render
+}
+```
+
+Behavior:
+
+- **Popup flow:** the callback page (opened inside the popup) verifies the
+  reference from the URL, posts the completion message to the parent tab, and
+  calls `window.close()`. Your original page's `useSwitchpay()` picks up the
+  message and finishes verifying.
+- **Full-page (popup-blocked) flow:** there's no opener. The component
+  verifies in-place and renders the outcome, or navigates to
+  `successRedirectTo` / `failureRedirectTo` when provided.
+
+The reference is read from the query string and is provider-agnostic —
+Paystack's `reference`/`trxref` and Flutterwave's `tx_ref` are all handled.
+
+### Naming the callback page
+
+The callback URL is sent to the provider at payment time, so its path must be
+*publicly reachable* (not behind auth). Copy the real URL from your live
+domain into `SWITCHPAY_CALLBACK_URL` — e.g.
+`https://your-domain.com/callback`:
 
 ### `status`
 

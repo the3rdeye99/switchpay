@@ -1,8 +1,16 @@
 {
   "name": "switchpay",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "Unified payment SDK for Paystack and Flutterwave in React/Next.js apps",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/the3rdeye99/switchpay.git"
+  },
+  "keywords": ["paystack", "flutterwave", "payments", "react", "next.js", "nigeria"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

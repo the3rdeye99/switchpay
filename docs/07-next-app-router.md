@@ -22,6 +22,14 @@ That's the entire server-side setup. The `GET` and `POST` exports handle all
 three routes by inspecting the first path segment (`init`, `verify`, or
 `webhook`).
 
+### Next.js version compatibility
+
+Works across all supported Next.js versions: **13.x, 14.x, 15.x, and 16.x**.
+Next 15+ made route handler `params` an asynchronous Promise; the handlers
+`await` the params internally, so the same zero-config code works whether
+you're on the old synchronous or new async shape — no version-specific code
+required.
+
 ## Adding payment lifecycle callbacks
 
 The zero-config default works end-to-end but runs no server-side logic on
